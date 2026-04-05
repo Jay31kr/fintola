@@ -44,6 +44,7 @@ export const signUpUser = asyncHandler(async (req , res)=>{
 
 })
 
+//function for user SignIn 
 export const signInUser = asyncHandler(async (req,res)=>{
     const {username , email , password}= req.body;
 
@@ -77,6 +78,7 @@ export const signInUser = asyncHandler(async (req,res)=>{
     );
 });
 
+//function to signout user
 export const signOutUser = asyncHandler(async(req,res)=>{
      const options = {
         httpOnly: true,
@@ -91,6 +93,7 @@ export const signOutUser = asyncHandler(async(req,res)=>{
 
 });
 
+//function get info of current loggedin user
 export const getMe = asyncHandler(async (req,res)=>{
     return res.status(200)
            .json(

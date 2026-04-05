@@ -45,7 +45,7 @@ const transactionSchema =  new Schema({
     required: true
   },
 },{
-    timeStamps :true,
+    timestamps :true,
 });
 
-export const Trnasaction = mongoose.model("Transaction" , transactionSchema);
+export const Transaction = mongoose.model("Transaction" , transactionSchema);
