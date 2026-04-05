@@ -7,6 +7,12 @@ const adminRequestSchema = new Schema({
         required :true,
     },
 
+    requestRole : {
+        type:String,
+        enum : ["admin" , "analyst"],
+        required : true,
+    },
+
     status : {
         type: String,
         enum : ["pending" , "approved" , "rejected"],

@@ -7,7 +7,7 @@ import { AdminRequest } from "../models/adminRequest.model.js";
 
 
 //function to signup user
-export const signUpUser = asyncHandler(async (req , res, next)=>{
+export const signUpUser = asyncHandler(async (req , res)=>{
     const {username , email , password , role} = req.body;
 
     //validations 
@@ -22,13 +22,20 @@ export const signUpUser = asyncHandler(async (req , res, next)=>{
         username,
         email,
         password,
-        role : role || "viewer"
+        role : "viwer"
     })
 
     //remove sensitive fields
     const createdUser = await User.findById(user._id).select("-password");
     
     if(!createdUser) throw new ApiError(500, "user registration failed");
+
+   if (role && ["analyst", "admin"].includes(role)) {
+    await AdminRequest.create({
+        user: createdUser._id,
+        requestRole: role
+    });
+}
 
     //response
     return res.status(201).json(
