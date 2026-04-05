@@ -29,6 +29,11 @@ const transactionSchema =  new Schema({
         default : "pending",
     },
 
+    note : {
+        type : String,
+        trim : true,
+    },
+
     date: {
     type: Date,
     required: true

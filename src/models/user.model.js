@@ -1,4 +1,6 @@
 import mongoose , {Schema} from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const userSchema = new Schema({
     username : {
@@ -23,7 +25,13 @@ const userSchema = new Schema({
     role:{
         type : String,
         role : ["viewer", "analyst", "admin"],
-        default : viwer,
+        default : "viewer",
+    },
+
+    status : {
+        type : String,
+        enum : ["active" , "inactive"],
+        default : "active",
     },
 
     approvedBy: {
@@ -35,10 +43,10 @@ const userSchema = new Schema({
 });
 
 userSchema.pre("save" , async function(next){
-    if(!this.isModified("password")) return next();
+    if(!this.isModified("password")) return;
 
-    this.password =  bcrypt.hash(this.password , 10);
-    next();
+    this.password = await  bcrypt.hash(this.password , 10);
+    return;
 });
 
 userSchema.methods.isPasswordCorrect = async function(password){
