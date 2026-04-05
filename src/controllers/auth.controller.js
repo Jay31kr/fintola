@@ -76,3 +76,17 @@ export const signInUser = asyncHandler(async (req,res)=>{
         )
     );
 });
+
+export const signOutUser = asyncHandler(async(req,res)=>{
+     const options = {
+        httpOnly: true,
+        secure: false
+    }
+
+    return res.status(200)
+        .clearCookie("accessToken" , options)
+        .json(
+            new ApiResponse(200 , {} , "user signed out successfully!!")
+        );
+
+});
