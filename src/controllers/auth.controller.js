@@ -43,3 +43,36 @@ export const signUpUser = asyncHandler(async (req , res)=>{
     );
 
 })
+
+export const signInUser = asyncHandler(async (req,res)=>{
+    const {username , email , password}= req.body;
+
+    if((!username && !email) || !password) throw new ApiError(400 , "All fields are required");
+
+    const user = await User.findOne({$or : [{username} , {email}]});
+    if(!user) throw new ApiError(404 , "user doesn't exist");
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    if(!isPasswordValid) throw new ApiError(401 , "Incorrect Credentials!!");
+
+    const signedInUser = user.toObject();
+    delete signedInUser.password;
+
+    const accessToken = user.generateAccessToken();
+
+    const options = {
+        httpOnly: true,
+        secure: false
+    }
+
+    return res.status(200)
+    .cookie("accessToken" , accessToken , options)
+    .json(
+        new ApiResponse(200,
+            {
+                user:signedInUser,
+            },
+            "user signned in sucessfully"
+        )
+    );
+});
