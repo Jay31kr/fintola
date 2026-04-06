@@ -63,7 +63,8 @@ export const signInUser = asyncHandler(async (req,res)=>{
 
     const options = {
         httpOnly: true,
-        secure: false
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
     }
 
     return res.status(200)
@@ -82,7 +83,8 @@ export const signInUser = asyncHandler(async (req,res)=>{
 export const signOutUser = asyncHandler(async(req,res)=>{
      const options = {
         httpOnly: true,
-        secure: false
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
     }
 
     return res.status(200)
