@@ -95,3 +95,22 @@ export const getTransactions = asyncHandler(async (req, res)=>{
       )
    );
 });
+
+// function to delete transaction
+export const deleteTransaction = asyncHandler(async (req,res)=>{
+   const {id}=req.params;
+
+   if(!id) throw new ApiError(400 , "Invalid Transaction Id");
+
+   const transaction = await Transaction.findByIdAndDelete(id);
+
+   if(!transaction) throw new ApiError(404 , "Transaction not found");
+
+   return res.status(200).json(
+      new ApiResponse(200,
+         null,
+         "Transaction deleted successfully"
+      )
+   );
+
+});
