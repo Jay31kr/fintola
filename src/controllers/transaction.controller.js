@@ -114,3 +114,45 @@ export const deleteTransaction = asyncHandler(async (req,res)=>{
    );
 
 });
+
+//function to update transaction 
+export const updateTransaction = asyncHandler(async(req,res)=>{
+   const {id} = req.params;
+
+   if(!id) throw new ApiError(400 , "Invalid transaction id");
+
+   const {
+      title,
+      amount, 
+      type,
+      category,
+      note
+   }=req.body;
+
+   const updateFields = {};
+
+   if(title) updateFields.title=title;
+   if(amount) updateFields.amount=amount;
+   if(type) updateFields.type=type;
+   if(category) updateFields.category=category;
+   if(note) updateFields.note=note;
+
+   if(Object.keys(updateFields).length==0) throw new ApiError(400 , "no fields provided for update");
+
+   const updatedTransaction = await Transaction.findByIdAndUpdate(
+      id,
+      {$set : updateFields },
+      {
+         returnDocument: "after",
+         runValidators :true,
+      }
+   );
+
+   if(!updatedTransaction) throw new ApiError(404 , "Transaction not found");
+
+   return res.status(200).json(
+      new ApiResponse(200,
+      updatedTransaction,
+      "Transaction updated successfully")
+   );
+});
