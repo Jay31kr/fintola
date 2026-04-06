@@ -6,6 +6,18 @@ Fintola is a robust backend system designed for financial analytics, featuring a
 
 ---
 
+## 🔑 Demo Credentials
+
+For testing purposes, you can use the following admin credentials to access restricted routes:
+
+* **Role:** Admin
+* **Email:** `codingbudies@gmail.com`
+* **Password:** `12345678`
+
+> **Note:** These credentials provide full access to user management, admin request approvals, and transaction CRUD operations.
+
+---
+
 ## 🚀 Features
 
 * **Authentication & Authorization:** Secure JWT-based authentication with role-specific access (Viewer, Analyst, Admin).
