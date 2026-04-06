@@ -126,3 +126,54 @@ export const handleAdminRequest = asyncHandler(async (req, res) => {
     )
   );
 });
+
+//function to update user 
+export const updateUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  // 1. Validate ID
+  if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) throw new ApiError(400, "Invalid user ID");
+  
+
+  const {
+    username,
+    email,
+    role,
+    status
+  } = req.body;
+
+  // 2. Build update object
+  const updateFields = {};
+
+  if (username) updateFields.username = username;
+  if (email) updateFields.email = email;
+  if (role) updateFields.role = role;
+  if(status) updateFields.status = status;
+  
+  // 5. Prevent empty update
+  if (Object.keys(updateFields).length === 0) {
+    throw new ApiError(400, "No fields provided for update");
+  }
+
+  // 6. Update
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    { $set: updateFields },
+    {
+      returnDocument: "after",
+      runValidators: true
+    }
+  ).select("-password");
+
+  if (!updatedUser) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      updatedUser,
+      "User updated successfully"
+    )
+  );
+});
