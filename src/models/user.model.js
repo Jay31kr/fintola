@@ -16,6 +16,7 @@ const userSchema = new Schema({
         unique : true,
         lowercase : true,
         trim : true,
+        match: [/^\S+@\S+\.\S+$/, "Invalid email"]
     },
     password : {
         type : String,
@@ -67,5 +68,8 @@ userSchema.methods.generateAccessToken = function(){
         }
     )
 };
+
+
+userSchema.index({ role: 1, status: 1 });
 
 export const User = mongoose.model("User" , userSchema);

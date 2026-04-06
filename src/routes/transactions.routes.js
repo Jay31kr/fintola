@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createTransaction , deleteTransaction, getInsights, getTransactions, updateTransaction } from "../controllers/transaction.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { authorizeRoles } from "../middlewares/roleAuth.middleware..js";
+import { authorizeRoles } from "../middlewares/roleAuth.middleware.js";
 
 const router = Router();
 
