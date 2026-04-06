@@ -22,6 +22,10 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK" });
 });
 
+app.get("/", (req, res) => {
+  res.status(200).json({ status: "OK" });
+});
+
 //routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
