@@ -130,11 +130,8 @@ export const handleAdminRequest = asyncHandler(async (req, res) => {
 //function to update user 
 export const updateUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-
-  // 1. Validate ID
   if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) throw new ApiError(400, "Invalid user ID");
   
-
   const {
     username,
     email,
@@ -142,7 +139,6 @@ export const updateUser = asyncHandler(async (req, res) => {
     status
   } = req.body;
 
-  // 2. Build update object
   const updateFields = {};
 
   if (username) updateFields.username = username;
@@ -174,6 +170,38 @@ export const updateUser = asyncHandler(async (req, res) => {
       200,
       updatedUser,
       "User updated successfully"
+    )
+  );
+});
+
+//function to toogle user status
+export const toggleUserStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  
+  if (!id)throw new ApiError(400, "Invalid user ID");
+
+  if (!status) throw new ApiError(400, "Invalid status");
+
+  if (id === req.user._id.toString()) throw new ApiError(400, "You cannot change your own status");
+  
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    { $set: { status } },
+    {
+      returnDocument: "after",
+      runValidators: true
+    }
+  ).select("-password");
+
+  if (!updatedUser) throw new ApiError(404, "User not found");
+
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      updatedUser,
+      `User ${status === "inactive" ? "deactivated" : "activated"} successfully`
     )
   );
 });
