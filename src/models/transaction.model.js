@@ -19,7 +19,7 @@ const transactionSchema =  new Schema({
 
     category: {
         type: String,
-        enum: ["marketing" , "HRExpense" , "Utilities" , "payroll" , "others"],
+        enum: ["marketing" , "HRexpense" , "Utilities" , "payroll" ,"ITservice", "productSale", "subscription", "others"],
         required:true,
     },
 
