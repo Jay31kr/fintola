@@ -81,7 +81,7 @@ src/
 | `GET` | `/api/v1/transactions/view` | All | View transactions (Paginated) |
 | `GET` | `/api/v1/transactions/insights`| Admin/Analyst| Aggregated financial data |
 | `PATCH` | `/api/v1/transactions/:id` | Admin | Update transaction details |
-| `DELETE` | `/api/v1/transactions/:id` | Admin | Soft delete transaction |
+| `DELETE` | `/api/v1/transactions/:id` | Admin | delete transaction |
 
 ---
 
