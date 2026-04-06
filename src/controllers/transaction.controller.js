@@ -156,3 +156,133 @@ export const updateTransaction = asyncHandler(async(req,res)=>{
       "Transaction updated successfully")
    );
 });
+
+
+//function to give the insigts of the transactions
+export const getInsights = asyncHandler(async (req, res) => {
+  const insights = await Transaction.aggregate([
+    {
+      $facet: {
+        // 1. Totals
+        totals: [
+          {
+            $group: {
+              _id: "$type",
+              total: { $sum: "$amount" }
+            }
+          }
+        ],
+
+        // 2. Category-wise expense
+        categoryExpense: [
+          { $match: { type: "expense" } },
+          {
+            $group: {
+              _id: "$category",
+              total: { $sum: "$amount" }
+            }
+          },
+          { $sort: { total: -1 } }
+        ],
+
+        // 3. Category-wise income
+        categoryIncome: [
+          { $match: { type: "income" } },
+          {
+            $group: {
+              _id: "$category",
+              total: { $sum: "$amount" }
+            }
+          },
+          { $sort: { total: -1 } }
+        ],
+
+        // 4. Monthly trends
+        monthlyTrends: [
+          {
+            $group: {
+              _id: {
+                year: { $year: "$date" },
+                month: { $month: "$date" },
+                type: "$type"
+              },
+              total: { $sum: "$amount" }
+            }
+          },
+          { $sort: { "_id.year": 1, "_id.month": 1 } }
+        ],
+
+        // 5. Weekly trends
+        weeklyTrends: [
+          {
+            $group: {
+              _id: {
+                year: { $year: "$date" },
+                week: { $week: "$date" },
+                type: "$type"
+              },
+              total: { $sum: "$amount" }
+            }
+          },
+          { $sort: { "_id.year": 1, "_id.week": 1 } }
+        ],
+
+        // 6. Top 5 spending categories
+        topExpenseCategories: [
+          { $match: { type: "expense" } },
+          {
+            $group: {
+              _id: "$category",
+              total: { $sum: "$amount" }
+            }
+          },
+          { $sort: { total: -1 } },
+          { $limit: 5 }
+        ],
+
+        // 7. Overall stats
+        stats: [
+          {
+            $group: {
+              _id: null,
+              totalTransactions: { $sum: 1 },
+              avgTransaction: { $avg: "$amount" }
+            }
+          }
+        ]
+      }
+    }
+  ]);
+
+  const data = insights[0];
+
+  // Post-process totals
+  let totalIncome = 0;
+  let totalExpense = 0;
+
+  data.totals.forEach(item => {
+    if (item._id === "income") totalIncome = item.total;
+    if (item._id === "expense") totalExpense = item.total;
+  });
+
+  const netBalance = totalIncome - totalExpense;
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        totalIncome,
+        totalExpense,
+        netBalance,
+        totalTransactions: data.stats[0]?.totalTransactions || 0,
+        avgTransaction: data.stats[0]?.avgTransaction || 0,
+        categoryExpense: data.categoryExpense,
+        categoryIncome: data.categoryIncome,
+        monthlyTrends: data.monthlyTrends,
+        weeklyTrends: data.weeklyTrends,
+        topExpenseCategories: data.topExpenseCategories
+      },
+      "insights fetched successfully"
+    )
+  );
+});
