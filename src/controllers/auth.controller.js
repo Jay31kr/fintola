@@ -61,11 +61,13 @@ export const signInUser = asyncHandler(async (req,res)=>{
 
     const accessToken = user.generateAccessToken();
 
-    const options = {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-    }
+   const options = {
+     httpOnly: true,
+     secure: true,              
+     sameSite: "none",
+     maxAge: 24 * 60 * 60 * 1000, 
+     path: "/",                 
+  }; 
 
     return res.status(200)
     .cookie("accessToken" , accessToken , options)
@@ -81,11 +83,13 @@ export const signInUser = asyncHandler(async (req,res)=>{
 
 //function to signout user
 export const signOutUser = asyncHandler(async(req,res)=>{
-     const options = {
+      const options = {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "none",
-    }
+        path: "/", // 🔥 MUST MATCH login
+      };
+
 
     return res.status(200)
         .clearCookie("accessToken" , options)
